@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/title_student"
+            android:textSize="26sp"
+            android:textStyle="bold" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="72dp"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/edtId"
+                android:text="@string/label_id"
+                android:textSize="18sp" />
+            <EditText
+                android:id="@+id/edtId"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:hint="@string/input_id"
+                android:inputType="text"
+                android:singleLine="true" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="72dp"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/edtName"
+                android:text="@string/label_name"
+                android:textSize="18sp" />
+            <EditText
+                android:id="@+id/edtName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:hint="@string/input_name"
+                android:inputType="textPersonName"
+                android:singleLine="true" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="72dp"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/edtEmail"
+                android:text="@string/label_email"
+                android:textSize="18sp" />
+            <EditText
+                android:id="@+id/edtEmail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:hint="@string/input_email"
+                android:inputType="textEmailAddress"
+                android:singleLine="true" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="72dp"
+                android:layout_height="wrap_content"
+                android:labelFor="@id/edtTel"
+                android:text="@string/label_tel"
+                android:textSize="18sp" />
+            <EditText
+                android:id="@+id/edtTel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:hint="@string/input_tel"
+                android:inputType="phone"
+                android:singleLine="true" />
+        </LinearLayout>
+        <RadioGroup
+            android:id="@+id/rgStorage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:checkedButton="@id/rbPreferences"
+            android:orientation="vertical">
+            <RadioButton
+                android:id="@+id/rbPreferences"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/mode_preferences" />
+            <RadioButton
+                android:id="@+id/rbSQLite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="@string/mode_sqlite" />
+        </RadioGroup>
+        <TextView
+            android:id="@+id/tvHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/hint_preferences" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:text="@string/save" />
+            <Button
+                android:id="@+id/btnLoad"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:minHeight="48dp"
+                android:text="@string/load" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>
