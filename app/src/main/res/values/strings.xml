@@ -10,10 +10,10 @@
     <string name="input_name">Họ và tên</string>
     <string name="input_email">VD: sv@example.com</string>
     <string name="input_tel">VD: 0901234567</string>
-    <string name="mode_preferences">SharedPreferences</string>
-    <string name="mode_sqlite">SQLite</string>
-    <string name="hint_preferences"></string>
-    <string name="hint_sqlite"></string>
-    <string name="save">Save</string>
-    <string name="load">Load</string>
+    <string name="mode_preferences">1. SharedPreferences</string>
+    <string name="mode_sqlite">2. SQLite</string>
+    <string name="save_pref">Save Pref</string>
+    <string name="load_pref">Load Pref</string>
+    <string name="save_sqlite">Save SQLite</string>
+    <string name="load_sqlite">Load SQLite</string>
 </resources>

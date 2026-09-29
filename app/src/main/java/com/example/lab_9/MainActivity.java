@@ -6,8 +6,6 @@ import android.util.Log;
 import android.util.Patterns;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.concurrent.ExecutorService;
@@ -15,9 +13,8 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity {
     private EditText edtId, edtName, edtEmail, edtTel;
-    private Button btnSave, btnLoad;
-    private RadioButton rbPreferences, rbSQLite;
-    private TextView tvHint;
+    private Button btnSavePref, btnLoadPref;
+    private Button btnSaveSqlite, btnLoadSqlite;
     private StudentPreferences preferences;
     private StudentDatabaseHelper database;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -31,27 +28,19 @@ public class MainActivity extends Activity {
         edtName = findViewById(R.id.edtName);
         edtEmail = findViewById(R.id.edtEmail);
         edtTel = findViewById(R.id.edtTel);
-        btnSave = findViewById(R.id.btnSave);
-        btnLoad = findViewById(R.id.btnLoad);
-        rbPreferences = findViewById(R.id.rbPreferences);
-        rbSQLite = findViewById(R.id.rbSQLite);
-        tvHint = findViewById(R.id.tvHint);
+
+        btnSavePref = findViewById(R.id.btnSavePref);
+        btnLoadPref = findViewById(R.id.btnLoadPref);
+        btnSaveSqlite = findViewById(R.id.btnSaveSqlite);
+        btnLoadSqlite = findViewById(R.id.btnLoadSqlite);
+
         preferences = new StudentPreferences(getApplicationContext());
         database = new StudentDatabaseHelper(getApplicationContext());
 
-        if (savedInstanceState != null) {
-            rbSQLite.setChecked(savedInstanceState.getBoolean("sqlite", false));
-            rbPreferences.setChecked(!rbSQLite.isChecked());
-        }
-        rbPreferences.setOnCheckedChangeListener((button, checked) -> updateHint());
-        rbSQLite.setOnCheckedChangeListener((button, checked) -> updateHint());
-        updateHint();
-        btnSave.setOnClickListener(view -> saveStudent());
-        btnLoad.setOnClickListener(view -> loadStudent());
-    }
-
-    private void updateHint() {
-        tvHint.setText(rbSQLite.isChecked() ? R.string.hint_sqlite : R.string.hint_preferences);
+        btnSavePref.setOnClickListener(view -> saveStudentPref());
+        btnLoadPref.setOnClickListener(view -> loadStudentPref());
+        btnSaveSqlite.setOnClickListener(view -> saveStudentSqlite());
+        btnLoadSqlite.setOnClickListener(view -> loadStudentSqlite());
     }
 
     private String text(EditText input) {
@@ -73,7 +62,6 @@ public class MainActivity extends Activity {
             edtEmail.requestFocus();
             return null;
         }
-        // ID va so dien thoai la String de giu so 0 o dau.
         return new Student(text(edtId), text(edtName), text(edtEmail), text(edtTel));
     }
 
@@ -84,44 +72,68 @@ public class MainActivity extends Activity {
         edtTel.setText(student.getTel());
     }
 
-    private void saveStudent() {
+    private void saveStudentPref() {
         Student student = readForm();
         if (student == null) return;
-        boolean useSQLite = rbSQLite.isChecked();
         setBusy(true);
         executor.execute(() -> {
             String message;
             try {
-                if (useSQLite) {
-                    database.save(student);
-                    message = "Đã lưu vào SQLite";
-                } else {
-                    message = preferences.save(student)
-                            ? "Đã lưu vào SharedPreferences" : "Không thể ghi dữ liệu";
-                }
+                message = preferences.save(student)
+                        ? "Đã lưu vào SharedPreferences" : "Không thể ghi dữ liệu SharedPreferences";
             } catch (RuntimeException error) {
-                Log.e("StudentStorage", "Save failed", error);
-                message = "Lưu thất bại. Vui lòng thử lại";
+                Log.e("StudentStorage", "Save Pref failed", error);
+                message = "Lưu SharedPreferences thất bại";
             }
             finishOperation(message, null);
         });
     }
 
-    private void loadStudent() {
-        boolean useSQLite = rbSQLite.isChecked();
-        if (useSQLite && !required(edtId)) return;
+    private void loadStudentPref() {
+        setBusy(true);
+        executor.execute(() -> {
+            try {
+                Student student = preferences.load();
+                String message = student != null ? "Đã tải dữ liệu từ SharedPreferences"
+                        : "Chưa có sinh viên được lưu trong SharedPreferences";
+                finishOperation(message, student);
+            } catch (RuntimeException error) {
+                Log.e("StudentStorage", "Load Pref failed", error);
+                finishOperation("Tải SharedPreferences thất bại", null);
+            }
+        });
+    }
+
+    private void saveStudentSqlite() {
+        Student student = readForm();
+        if (student == null) return;
+        setBusy(true);
+        executor.execute(() -> {
+            String message;
+            try {
+                database.save(student);
+                message = "Đã lưu vào SQLite";
+            } catch (RuntimeException error) {
+                Log.e("StudentStorage", "Save SQLite failed", error);
+                message = "Lưu SQLite thất bại";
+            }
+            finishOperation(message, null);
+        });
+    }
+
+    private void loadStudentSqlite() {
+        if (!required(edtId)) return;
         String id = text(edtId);
         setBusy(true);
         executor.execute(() -> {
             try {
-                Student student = useSQLite ? database.load(id) : preferences.load();
-                String message = student != null ? "Đã tải dữ liệu"
-                        : useSQLite ? "Không tìm thấy sinh viên có ID: " + id
-                        : "Chưa có sinh viên được lưu";
+                Student student = database.load(id);
+                String message = student != null ? "Đã tải dữ liệu từ SQLite"
+                        : "Không tìm thấy sinh viên có ID: " + id;
                 finishOperation(message, student);
             } catch (RuntimeException error) {
-                Log.e("StudentStorage", "Load failed", error);
-                finishOperation("Tải thất bại. Vui lòng thử lại", null);
+                Log.e("StudentStorage", "Load SQLite failed", error);
+                finishOperation("Tải SQLite thất bại", null);
             }
         });
     }
@@ -136,10 +148,10 @@ public class MainActivity extends Activity {
     }
 
     private void setBusy(boolean busy) {
-        btnSave.setEnabled(!busy);
-        btnLoad.setEnabled(!busy);
-        rbPreferences.setEnabled(!busy);
-        rbSQLite.setEnabled(!busy);
+        btnSavePref.setEnabled(!busy);
+        btnLoadPref.setEnabled(!busy);
+        btnSaveSqlite.setEnabled(!busy);
+        btnLoadSqlite.setEnabled(!busy);
         edtId.setEnabled(!busy);
         edtName.setEnabled(!busy);
         edtEmail.setEnabled(!busy);
@@ -147,14 +159,7 @@ public class MainActivity extends Activity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean("sqlite", rbSQLite.isChecked());
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     protected void onDestroy() {
-        // Dong database sau khi cac cong viec dang cho da hoan tat.
         executor.execute(() -> database.close());
         executor.shutdown();
         super.onDestroy();
